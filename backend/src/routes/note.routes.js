@@ -24,6 +24,6 @@ noteRouter.route("/notes").get(verifyJWT,getUserNotes)
 
 noteRouter.route("/notes/:id").delete(verifyJWT,deleteNote)
 
-noteRouter.route("/notes/:id").patch(verifyJWT,updateNoteData)
+noteRouter.route("/notes/:id").patch(verifyJWT,upload.none(),updateNoteData)
 
 export {noteRouter}

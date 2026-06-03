@@ -2,6 +2,8 @@ import { User } from "../models/user.models.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { apiError } from "../utils/apiError.js";
 import { apiResponse } from "../utils/apiResponse.js";
+import { uploadOnCloudinary } from "../middlewares/cloudinary.middleware.js";
+import fs from "fs"
 
 const generateAccessAndRefreshToken = async (_id) => {
     const user = await User.findById(_id)
@@ -18,37 +20,83 @@ const generateAccessAndRefreshToken = async (_id) => {
         throw new apiError(500, "problem in generating the tokens")
     }
 
+
+
     return { accessToken, refreshToken }
 
 }
 
 const registerUser = asyncHandler(async (req, res) => {
+
     const { firstName, lastName, userName, password, email } = req.body;
+
+    const avatarLocalPath = req.files?.avatar?.[0]?.path;
+
+    const coverImageLocalPath = req.files?.coverImage?.[0]?.path;
 
     if ([firstName, lastName, userName, password, email].some((val) => val === "" ? true : false)) {
         throw new apiError(500, "enter all the details")
     }
 
-    const user = await User.find({
-        $or: [{ userName }, { email }]
-    })
-
-    if (user) {
-        throw new apiError(400, "User already exists")
-    }
-
-
-    const createdUser = await User.create({
+    const uploadFields = {
         firstName,
         lastName,
         userName,
         password,
         email
+    };
+
+    // if(avatarLocalPath){
+    //     uploadFields.avatarLocalPath=avatarLocalPath
+    // }
+
+
+
+
+    const user = await User.find({
+        $or: [{ userName }, { email }]
     })
+
+
+    if (user.length > 0) {
+        throw new apiError(400, "User already exists")
+    }
+
+    if (avatarLocalPath) {
+        console.log("hello");
+        const avatarUrl = await uploadOnCloudinary(avatarLocalPath)
+        if (!avatarUrl) {
+            throw new apiError(500, "problem uploading user-avatar to the cloudinary")
+        }
+
+        uploadFields.avatar = avatarUrl.url
+        fs.unlinkSync(avatarLocalPath)
+
+    }
+
+    if (coverImageLocalPath) {
+        const coverImageUrl = await uploadOnCloudinary(coverImageLocalPath)
+        if (!coverImageUrl) {
+            throw new apiError(500, "problem uploading user-coverImage to the cloudinary")
+        }
+
+        uploadFields.coverImage = coverImageUrl.url
+        fs.unlinkSync(coverImageLocalPath)
+        
+    }
+
+
+    const createdUser = await User.create(uploadFields)
 
     if (!createdUser) {
         throw new apiError(400, "problem in creating user")
     }
+
+
+
+    return res.status(200).json(
+        new apiResponse("user created successfully", 200, createdUser)
+    )
 
 })
 
@@ -74,7 +122,7 @@ const loginUser = asyncHandler(async (req, res) => {
         throw new apiError(401, "enter the correct password to login")
     }
 
-    const { refreshToken, accessToken } = generateAccessAndRefreshToken(user._id);
+    const { refreshToken, accessToken } = await generateAccessAndRefreshToken(user._id);
 
     user.refreshToken = refreshToken
 
@@ -96,15 +144,14 @@ const loginUser = asyncHandler(async (req, res) => {
 })
 
 const logoutUser = asyncHandler(async (req, res) => {
-    const user = req.user;
+    const userStaticObject = req.user;
 
-    if (!user) {
-        throw new apiError(401, "bad request no user is logged in")
-    }
+    const user=await User.findById(userStaticObject._id)
 
     user.refreshToken = "";
 
-    await user.save({ validateBeforeSave: false })
+    
+    await user.save({ validateBeforeSave: false });
 
     const cookieOptions = {
         httpOnly: true,
@@ -122,4 +169,4 @@ const logoutUser = asyncHandler(async (req, res) => {
 })
 
 
-export { registerUser, loginUser ,logoutUser }
+export { registerUser, loginUser, logoutUser }

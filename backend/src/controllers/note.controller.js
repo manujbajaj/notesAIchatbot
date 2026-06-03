@@ -7,44 +7,55 @@ import { uploadOnCloudinary, deleteFromCloudinary } from "../middlewares/cloudin
 import { apiResponse } from "../utils/apiResponse.js";
 import mongoose from "mongoose";
 
+import fs from "fs"
+
 const addNote = asyncHandler(async (req, res) => {
 
     const { noteTitle, noteData } = req.body
 
+    
     if (!noteTitle || !noteData) {
         throw new apiError(400, "enter all the feilds")
     }
-
+    
     const uploadFeilds={
         noteTitle,
         noteData
     }
-
-    const avatarImageNotePath = req.files?.avatar[0]?.path
-    const coverImageNotePath = req.files?.coverImage[0]?.path
+    
+    const avatarImageNotePath = req.files?.noteAvatar?.[0]?.path
+    const coverImageNotePath = req.files?.noteCoverImage?.[0]?.path
     
     let isAvatarUploaded ;
     let isCoverImageUploaded;
-
+    
     if(avatarImageNotePath){
         isAvatarUploaded=await uploadOnCloudinary(avatarImageNotePath);
-
+        
+        console.log("hello");
+        
         if(!isAvatarUploaded){
+            fs.unlinkSync(avatarImageNotePath)
             throw new apiError(500, "SORRY!!! problem in uploading the avatar file to the cloudinary")
         }
 
         uploadFeilds.noteAvatar=isAvatarUploaded.url
 
+        fs.unlinkSync(avatarImageNotePath)
+
     }
 
     if(coverImageNotePath){
-        isCoverImageUploaded=await uploadOnCloudinary(avatarImageNotePath);
+        isCoverImageUploaded=await uploadOnCloudinary(coverImageNotePath);
 
         if(!isCoverImageUploaded){
+            fs.unlinkSync(coverImageNotePath)
             throw new apiError(500, "SORRY!!! problem in uploading the coverImage file to the cloudinary")
         }
 
         uploadFeilds.noteCoverImage=isCoverImageUploaded.url
+
+        fs.unlinkSync(coverImageNotePath)
     }
 
 
@@ -63,10 +74,12 @@ const addNote = asyncHandler(async (req, res) => {
 const updateNoteData = asyncHandler(async (req, res) => {
 
     const { id }=req.params;
-
+    console.log(id);
+    
     const { noteTitle, noteData } = req.body;
 
     const updateFields = {};
+    
 
     if (noteTitle) updateFields.noteTitle = noteTitle;
     if (noteData) updateFields.noteData = noteData;
@@ -132,7 +145,7 @@ const getNoteById=asyncHandler(async(req,res)=>{
     const note=await Note.findById(id);
 
     if(!note){
-        throw new apiError(500,"problem fetching the note")
+        throw new apiError(404,"No note found")
     }
 
     return res.status(200).json(

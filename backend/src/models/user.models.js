@@ -42,7 +42,6 @@ const userSchema=new mongoose.Schema({
 
     avatar:{
         type:String,
-        required:true,
         index:true,
     },
 
@@ -72,8 +71,8 @@ userSchema.methods.generateAccessToken=async function(){
         ,
         {
             expiresIn:process.env.ACCESS_TOKEN_EXPIRY
-        }
-    )
+        })
+    return accessToken
 }
 
 userSchema.methods.genereateRefreshToken=async function(){
@@ -86,6 +85,7 @@ userSchema.methods.genereateRefreshToken=async function(){
             expiresIn:process.env.REFRESH_TOKEN_EXPIRY
         }
     )
+    return refreshToken
 }
 
 userSchema.methods.isPasswordCorrect=async function(passwordRecieved){
