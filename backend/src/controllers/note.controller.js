@@ -74,7 +74,6 @@ const addNote = asyncHandler(async (req, res) => {
 const updateNoteData = asyncHandler(async (req, res) => {
 
     const { id }=req.params;
-    console.log(id);
     
     const { noteTitle, noteData } = req.body;
 
@@ -104,7 +103,10 @@ const updateNoteData = asyncHandler(async (req, res) => {
         updateFields.noteCoverImage = coverUploaded.url;
     }
 
-    let note=await Note.findById(id)
+    let note=await Note.findOne({
+        _id:req.params.id,
+        owner:req.user._id,
+    })
 
     if(!note){
         throw new apiError(404, "note not found");
@@ -119,7 +121,7 @@ const updateNoteData = asyncHandler(async (req, res) => {
     
 
     return res.status(200).json(
-        new apiResponse(200, note, "successfully updated the note")
+        new apiResponse("successfully updated the note",200, note)
     );
 });
 
@@ -164,7 +166,7 @@ const deleteNote=asyncHandler(async(req,res)=>{
 
     if(!note){
         throw new apiError(404,"note not found")
-    }
+    }   
 
     await note.deleteOne()
 

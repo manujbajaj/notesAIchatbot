@@ -26,6 +26,21 @@ const generateAccessAndRefreshToken = async (_id) => {
 
 }
 
+const getUser=asyncHandler(async(req,res)=>{
+    const staticUserData=req.user
+
+    const user=await User.findById(staticUserData._id).select("-password -refreshToken");
+
+    if(!user){
+        throw new apiError(500,"problem getting the user")
+    }
+
+    return res.status(200).json(
+        new apiResponse("success",200,user)
+    )
+
+})
+
 const registerUser = asyncHandler(async (req, res) => {
 
     const { firstName, lastName, userName, password, email } = req.body;
@@ -110,7 +125,11 @@ const loginUser = asyncHandler(async (req, res) => {
 
     const user = await User.findOne({
         $or: [{ userName }, { email }]
-    })
+    }).select("-refreshToken");
+
+
+    
+
 
     if (!user) {
         throw new apiError(500, "User does not exist")
@@ -128,11 +147,19 @@ const loginUser = asyncHandler(async (req, res) => {
 
     await user.save({ validateBeforeSave: false })
 
+    user.password=undefined;
+
+
+    
+
     const cookieOptions = {
         httpOnly: true,
         secure: true,
         sameSite: "strict"
     }
+
+
+    
 
     return res.status(202)
         .cookie("accessToken", accessToken, cookieOptions)
@@ -169,4 +196,4 @@ const logoutUser = asyncHandler(async (req, res) => {
 })
 
 
-export { registerUser, loginUser, logoutUser }
+export { registerUser, loginUser, logoutUser ,getUser}
