@@ -3,6 +3,9 @@ import api from '../api'
 import { useState } from 'react'
 import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
+import Box from '@mui/material/Box';
+import LinearProgress from '@mui/material/LinearProgress';
+
 
 const Notes = () => {
     const [loading,setLoading]=useState(true)
@@ -12,10 +15,19 @@ const Notes = () => {
             const notesData=await api.get("/notes/notes")
     
             setNotes(notesData.data.data)
+            setLoading(false)
             
         }
         getNotes()
     },[])
+
+    if(loading){
+        return(
+            <Box className="mt-3 p-5" sx={{ width: '100%' }}>
+            <LinearProgress aria-label="Loading…" />
+            </Box>
+        )
+    }
   return (
     <div className='grid grid-cols-2 p-5 gap-4 grid-'>
         {notes.length>0?(notes.map((note)=>(

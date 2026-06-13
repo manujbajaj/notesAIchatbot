@@ -11,6 +11,8 @@ import LoginUser from './pages/loginUser'
 import RegisterUser from './pages/registerUser'
 import Notes from './pages/notes'
 import EditNote from './pages/editnote'
+import Aichat from './components/aichatbot'
+import FloatingChatbot from './components/floatingChatbot'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -25,7 +27,12 @@ function App() {
           <Route path='/user-notes' element={<Notes/>}/>
           <Route path='/add-note' element={<AddNote/>}/>
           <Route path='/edit-note/:id' element={<EditNote/>}/>
+          <Route path='/ai-chat' element={<Aichat/>}/>
         </Routes>
+
+        <FloatingChatbot/>
+
+        
         
       
     </div>

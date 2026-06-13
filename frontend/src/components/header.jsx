@@ -38,6 +38,7 @@ const Header = () => {
           <div className='cursor-pointer'><Link to='/'>Home</Link></div>
           <div className='cursor-pointer'>Contact us.</div>
           <div className='cursor-pointer'>About</div>
+          <div className='cursor-pointer'><Link to='/ai-chat'>Ai ChatBot</Link></div>
         </div>
         <div className=''>
           {user?(
