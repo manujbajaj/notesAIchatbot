@@ -18,8 +18,9 @@ function App() {
   const [count, setCount] = useState(0)
 
   return (
-    <div className='h-screen'>
+    <div className='min-h-screen bg-slate-950 text-slate-100 font-sans flex flex-col'>
       <Header/>
+      <div className='flex-1 flex flex-col'>
         <Routes>
           <Route path='/' element={<LandingPage/>}/>
           <Route path='/login' element={<LoginUser/>}/>
@@ -29,6 +30,7 @@ function App() {
           <Route path='/edit-note/:id' element={<EditNote/>}/>
           <Route path='/ai-chat' element={<Aichat/>}/>
         </Routes>
+      </div>
 
         <FloatingChatbot/>
 
