@@ -26,17 +26,17 @@ const generateAccessAndRefreshToken = async (_id) => {
 
 }
 
-const getUser=asyncHandler(async(req,res)=>{
-    const staticUserData=req.user
+const getUser = asyncHandler(async (req, res) => {
+    const staticUserData = req.user
 
-    const user=await User.findById(staticUserData._id).select("-password -refreshToken");
+    const user = await User.findById(staticUserData._id).select("-password -refreshToken");
 
-    if(!user){
-        throw new apiError(500,"problem getting the user")
+    if (!user) {
+        throw new apiError(500, "problem getting the user")
     }
 
     return res.status(200).json(
-        new apiResponse("success",200,user)
+        new apiResponse("success", 200, user)
     )
 
 })
@@ -97,7 +97,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
         uploadFields.coverImage = coverImageUrl.url
         fs.unlinkSync(coverImageLocalPath)
-        
+
     }
 
 
@@ -128,7 +128,7 @@ const loginUser = asyncHandler(async (req, res) => {
     }).select("-refreshToken");
 
 
-    
+
 
 
     if (!user) {
@@ -147,10 +147,10 @@ const loginUser = asyncHandler(async (req, res) => {
 
     await user.save({ validateBeforeSave: false })
 
-    user.password=undefined;
+    user.password = undefined;
 
 
-    
+
 
     const cookieOptions = {
         httpOnly: true,
@@ -159,7 +159,7 @@ const loginUser = asyncHandler(async (req, res) => {
     }
 
 
-    
+
 
     return res.status(202)
         .cookie("accessToken", accessToken, cookieOptions)
@@ -173,11 +173,11 @@ const loginUser = asyncHandler(async (req, res) => {
 const logoutUser = asyncHandler(async (req, res) => {
     const userStaticObject = req.user;
 
-    const user=await User.findById(userStaticObject._id)
+    const user = await User.findById(userStaticObject._id)
 
     user.refreshToken = "";
 
-    
+
     await user.save({ validateBeforeSave: false });
 
     const cookieOptions = {
@@ -196,4 +196,4 @@ const logoutUser = asyncHandler(async (req, res) => {
 })
 
 
-export { registerUser, loginUser, logoutUser ,getUser}
+export { registerUser, loginUser, logoutUser, getUser }
