@@ -155,7 +155,7 @@ const loginUser = asyncHandler(async (req, res) => {
     const cookieOptions = {
         httpOnly: true,
         secure: true,
-        sameSite: "strict"
+        sameSite: "none"
     }
 
 
@@ -183,7 +183,7 @@ const logoutUser = asyncHandler(async (req, res) => {
     const cookieOptions = {
         httpOnly: true,
         secure: true,
-        sameSite: "strict"
+        sameSite: "none"
     }
 
     res
