@@ -34,7 +34,7 @@ const Header = () => {
   return (
     <div className=' flex justify-between items-center bg-gray-300 p-3' >
         <div>Logo.</div>
-        <div className='flex justify-between gap-10'>
+        <div className='flex justify-between gap-10 w-1/3'>
           <div className='cursor-pointer'><Link to='/'>Home</Link></div>
           <div className='cursor-pointer'>Contact us.</div>
           <div className='cursor-pointer'>About</div>
