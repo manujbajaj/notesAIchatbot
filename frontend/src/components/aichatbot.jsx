@@ -53,7 +53,7 @@ const Aichat = () => {
             
             <div className='sm:flex-col w-full flex gap-2 sm:gap-3 mt-auto'>
                 <input type="text" className='flex-1 rounded-full bg-slate-800 border border-slate-700 text-slate-200 focus:outline-none focus:border-teal-400 focus:ring-1 focus:ring-teal-400 transition-all px-4 sm:px-6 py-3 placeholder:text-slate-500 shadow-md' placeholder='Ask whatever you want...' onChange={handleChange} ></input>
-                <button type="submit" className='px-4 sm:px-8 py-3 rounded-full bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-bold shadow-lg shadow-teal-500/30 hover:shadow-teal-500/50 hover:scale-105 transition-all cursor-pointer'>Send</button>
+                <button type="submit" className='px-4 sm:px-8 py-3 rounded-full bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-bold shadow-lg shadow-teal-500/30 hover:shadow-teal-500/50 hover:scale-102 transition-all cursor-pointer'>Send</button>
             </div>
             
             {output.length>0&&(

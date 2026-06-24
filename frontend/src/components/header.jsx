@@ -51,11 +51,11 @@ const Header = () => {
                 <button onClick={handleLogout} className='px-5 py-2 rounded-full border border-slate-600 hover:border-rose-500 hover:text-rose-400 hover:bg-rose-500/10 transition-all duration-300 cursor-pointer'>logout</button>
                 </div>
             ):(
-                <button className='px-6 py-2 rounded-full bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-semibold shadow-lg shadow-teal-500/25 hover:scale-105 transition-all duration-300 cursor-pointer'>
-                <Link to="/login">
+                <Link to="/login"><button className='px-6 py-2 rounded-full bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-semibold shadow-lg shadow-teal-500/25 hover:scale-105 transition-all duration-300 cursor-pointer'>
+                
                     Login
-                </Link>
-                </button>
+                
+                </button></Link>
             )}
             </div>
             <div className='md:hidden absolute right-5 cursor-pointer text-2xl text-slate-300' onClick={()=>setOpen(!open)}>
